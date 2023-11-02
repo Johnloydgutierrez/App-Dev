@@ -83,7 +83,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Add Product</a>
+                        <a class="collapse-item" href="/products">Add Product</a>
                    
                     </div>
                 </div>
@@ -202,72 +202,115 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                <h1>PHP CRUD Example</h1>
+    <h2>Create Item</h2>
+    <form id="create-form">
+        <input type="text" id="create-item" placeholder="Enter item name">
+        <button type="button" onclick="createItem()">Create</button>
+    </form>
+    
+    <h2>Update Item</h2>
+    <form id="update-form">
+        <input type="text" id="update-item" placeholder="Enter new item name">
+        <input type="hidden" id="update-id">
+        <button type="button" onclick="updateItem()">Update</button>
+    </form>
+    
+    <h2>Items</h2>
+    <ul id="item-list"></ul>
+    
+    <script>
+        // Function to create a new item
+        function createItem() {
+            var newItem = document.getElementById("create-item").value;
+            fetch('backend.php', {
+                method: 'POST',
+                body: JSON.stringify({ action: 'create', item: newItem }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Item created successfully.");
+                    document.getElementById("create-item").value = '';
+                    loadItems();
+                } else {
+                    alert("Error creating item.");
+                }
+            });
+        }
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Charts</h1>
-                    <p class="mb-4">Chart.js is a third party plugin that is used to generate the charts in this theme.
-                        The charts below have been customized - for further customization options, please visit the <a
-                            target="_blank" href="https://www.chartjs.org/docs/latest/">official Chart.js
-                            documentation</a>.</p>
+        // Function to update an item
+        function updateItem() {
+            var newItem = document.getElementById("update-item").value;
+            var itemId = document.getElementById("update-id").value;
+            fetch('backend.php', {
+                method: 'POST',
+                body: JSON.stringify({ action: 'update', id: itemId, item: newItem }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Item updated successfully.");
+                    document.getElementById("update-item").value = '';
+                    document.getElementById("update-id").value = '';
+                    loadItems();
+                } else {
+                    alert("Error updating item.");
+                }
+            });
+        }
 
-                    <!-- Content Row -->
-                    <div class="row">
+        // Function to delete an item
+        function deleteItem(id) {
+            fetch('backend.php', {
+                method: 'POST',
+                body: JSON.stringify({ action: 'delete', id: id }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Item deleted successfully.");
+                    loadItems();
+                } else {
+                    alert("Error deleting item.");
+                }
+            });
+        }
 
-                        <div class="col-xl-8 col-lg-7">
+        // Function to load items
+        function loadItems() {
+            fetch('backend.php', {
+                method: 'POST',
+                body: JSON.stringify({ action: 'read' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var itemList = document.getElementById("item-list");
+                itemList.innerHTML = '';
+                data.forEach(function(item) {
+                    var li = document.createElement("li");
+                    li.innerHTML = item.name + ' ';
+                    var editButton = document.createElement("button");
+                    editButton.innerText = 'Edit';
+                    editButton.onclick = function() {
+                        document.getElementById("update-item").value = item.name;
+                        document.getElementById("update-id").value = item.id;
+                    };
+                    var deleteButton = document.createElement("button");
+                    deleteButton.innerText = 'Delete';
+                    deleteButton.onclick = function() {
+                        deleteItem(item.id);
+                    };
+                    li.appendChild(editButton);
+                    li.appendChild(deleteButton);
+                    itemList.appendChild(li);
+                });
+            });
+        }
 
-                            <!-- Area Chart -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Area Chart</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
-                                    <hr>
-                                    Styling for the area chart can be found in the
-                                    <code>/js/demo/chart-area-demo.js</code> file.
-                                </div>
-                            </div>
-
-                            <!-- Bar Chart -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart-bar">
-                                        <canvas id="myBarChart"></canvas>
-                                    </div>
-                                    <hr>
-                                    Styling for the bar chart can be found in the
-                                    <code>/js/demo/chart-bar-demo.js</code> file.
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Donut Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Donut Chart</h6>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <hr>
-                                    Styling for the donut chart can be found in the
-                                    <code>/js/demo/chart-pie-demo.js</code> file.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+        // Initial load of items
+        loadItems();
+    </script>
                 <!-- /.container-fluid -->
 
             </div>

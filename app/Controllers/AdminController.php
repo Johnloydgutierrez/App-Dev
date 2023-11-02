@@ -27,4 +27,19 @@ class AdminController extends BaseController
     {
         return view('website');
     }
+
+    public function charts()
+    {
+        return view('charts');
+    }
+
+    public function tables()
+    {
+        return view('tables');
+    }
+
+    public function products()
+    {
+        return view('products');
+    }
 }
