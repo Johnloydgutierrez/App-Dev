@@ -199,117 +199,76 @@
 
                 </nav>
                 <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                <h1>PHP CRUD Example</h1>
-    <h2>Create Item</h2>
-    <form id="create-form">
-        <input type="text" id="create-item" placeholder="Enter item name">
-        <button type="button" onclick="createItem()">Create</button>
-    </form>
-    
-    <h2>Update Item</h2>
-    <form id="update-form">
-        <input type="text" id="update-item" placeholder="Enter new item name">
-        <input type="hidden" id="update-id">
-        <button type="button" onclick="updateItem()">Update</button>
-    </form>
-    
-    <h2>Items</h2>
-    <ul id="item-list"></ul>
-    
-    <script>
-        // Function to create a new item
-        function createItem() {
-            var newItem = document.getElementById("create-item").value;
-            fetch('backend.php', {
-                method: 'POST',
-                body: JSON.stringify({ action: 'create', item: newItem }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Item created successfully.");
-                    document.getElementById("create-item").value = '';
-                    loadItems();
-                } else {
-                    alert("Error creating item.");
-                }
-            });
+                <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <style>
+        .center-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        // Function to update an item
-        function updateItem() {
-            var newItem = document.getElementById("update-item").value;
-            var itemId = document.getElementById("update-id").value;
-            fetch('backend.php', {
-                method: 'POST',
-                body: JSON.stringify({ action: 'update', id: itemId, item: newItem }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Item updated successfully.");
-                    document.getElementById("update-item").value = '';
-                    document.getElementById("update-id").value = '';
-                    loadItems();
-                } else {
-                    alert("Error updating item.");
-                }
-            });
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        // Function to delete an item
-        function deleteItem(id) {
-            fetch('backend.php', {
-                method: 'POST',
-                body: JSON.stringify({ action: 'delete', id: id }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Item deleted successfully.");
-                    loadItems();
-                } else {
-                    alert("Error deleting item.");
-                }
-            });
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
         }
 
-        // Function to load items
-        function loadItems() {
-            fetch('backend.php', {
-                method: 'POST',
-                body: JSON.stringify({ action: 'read' }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                var itemList = document.getElementById("item-list");
-                itemList.innerHTML = '';
-                data.forEach(function(item) {
-                    var li = document.createElement("li");
-                    li.innerHTML = item.name + ' ';
-                    var editButton = document.createElement("button");
-                    editButton.innerText = 'Edit';
-                    editButton.onclick = function() {
-                        document.getElementById("update-item").value = item.name;
-                        document.getElementById("update-id").value = item.id;
-                    };
-                    var deleteButton = document.createElement("button");
-                    deleteButton.innerText = 'Delete';
-                    deleteButton.onclick = function() {
-                        deleteItem(item.id);
-                    };
-                    li.appendChild(editButton);
-                    li.appendChild(deleteButton);
-                    itemList.appendChild(li);
-                });
-            });
+        label {
+            text-align: left;
         }
+            
+        .save-btn {
+            width: 50;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-content">
+        <h1>Add Product</h1>
+        <form action="/tables" method="post" class="form-container">
+            <div class="form-group">
+                <label for="ProductName">Product Name:</label>
+                <input type="text" name="ProductName" id="ProductName" required>
+            </div>
 
-        // Initial load of items
-        loadItems();
+            <div class="form-group">
+                <label for="ProductDescription">Product Description:</label>
+                <input type="text" name="ProductDescription" id="ProductDescription" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="ProductCategory">Product Category:</label>
+                <input type="text" name="ProductCategory" id="ProductCategory" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ProductQuantity">Product Quantity:</label>
+                <input type="text" name="ProductQuantity" id="ProductQuantity" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ProductPrice">Product Price:</label>
+                <input type="text" name="ProductPrice" id="ProductPrice" required>
+            </div>
+
+            <a class="collapse-item" href="/tables">Save</a>
+        </form>
+    </div>
+</body>
+</html>
     </script>
                 <!-- /.container-fluid -->
 
